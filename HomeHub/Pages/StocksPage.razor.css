@@ -1,0 +1,43 @@
+:root {
+  --faded: rgba(0, 0, 0, .1);
+}
+
+.top-row {
+  display: flex;
+}
+
+.chart-container {
+  width: 100%;
+}
+
+.chart-box {
+  display: flex;
+  align-items: flex-start;
+}
+
+.card-container {
+  position: relative;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr 1fr 1fr .5fr;
+}
+
+.grid-col-span-3 {
+  grid-column: span 3;
+}
+
+.grid-col-span-4 {
+  grid-column: span 4;
+}
+
+.grid-row-span-2 {
+  grid-row: span 2;
+}
+
+
+
+@media (min-width:1400px) {
+  .card-container {
+    grid-template-columns: 1fr 1fr 1fr .1fr;
+  }
+}

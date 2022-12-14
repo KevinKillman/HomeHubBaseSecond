@@ -1,0 +1,131 @@
+@using Microsoft.AspNetCore.Identity;
+@inject UserManager<IdentityUser> _UserManager
+@inject RoleManager<IdentityRole> _RoleManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<div class="top-row navbar navbar-dark">
+  <div class="container-fluid"
+       style="justify-content:center;background:none;">
+    <a class="navbar-brand @NavMenuCssClass"
+       href="">Kevin Killman</a>
+    <button title="Navigation menu"
+            @onclick="ToggleNavMenu"
+            class="menu-toggle-icon">
+      <span class="bi bi-list-ul "
+            style="color:inherit;padding:inherit;"></span>
+    </button>
+  </div>
+</div>
+
+<div class="container">
+  <nav class="flex-column">
+    <div class="nav-item">
+      <NavLink class="nav-link"
+               href=""
+               Match="NavLinkMatch.All">
+        <span class="oi oi-home"
+              aria-hidden="true"></span>
+        <div class="inline-div @NavMenuCssClass">Home</div>
+      </NavLink>
+    </div>
+
+    <div class="nav-item">
+      <NavLink class="nav-link"
+               href="NflProject">
+        <span class="oi oi-document"
+              aria-hidden="true"></span>
+        <div class="inline-div @NavMenuCssClass">
+          NFL Weather Project
+        </div>
+      </NavLink>
+    </div>
+    <div class="nav-item">
+      <NavLink class="nav-link"
+               href="StocksPage">
+        <span class="oi oi-fire"
+              aria-hidden="true"></span>
+        <div class="inline-div @NavMenuCssClass">
+          Built in Blazor
+        </div>
+      </NavLink>
+    </div>
+    <div class="nav-item">
+      <NavLink class="nav-link"
+               href="Editor">
+        <span class="oi oi-pencil"
+              aria-hidden="true"></span>
+        <div class="inline-div @NavMenuCssClass">
+          Editor
+        </div>
+      </NavLink>
+    </div>
+    <AuthorizeView>
+      <Authorized>
+
+        <div class="nav-item">
+          <NavLink class="nav-link"
+                   href="Identity/Account/Manage">
+            <span class="oi oi-person"
+                  aria-hidden="true"></span>
+            <div class="inline-div @NavMenuCssClass">
+              Account
+            </div>
+          </NavLink>
+        </div>
+
+        @if (@context.User.IsInRole(ADMINISTRATION_ROLE))
+        {
+          <div class="nav-item">
+            <NavLink class="nav-link"
+                   href="administration">
+              <span class="oi oi-clipboard"
+                  aria-hidden="true"></span>
+              <div class="inline-div @NavMenuCssClass">
+                Administration
+              </div>
+            </NavLink>
+          </div>
+        }
+      </Authorized>
+    </AuthorizeView>
+
+
+
+    @* <BSButton Target="project-collapse-area" style="color:white; box-shadow:none;" >Projects</BSButton>
+      <BSCollapse DataId="project-collapse-area" class="@NavMenuCssClass" @ref="projectCollapseArea">
+      <div class="container" id="collapseAreaID">
+      <BSListGroup class="@NavMenuCssClass" >
+      <BSListGroupItem style="background:none;border:none;box-shadow:none;"><a href="PersonalProjects"
+      class="nav-child"><span>First Project</span></a></BSListGroupItem>
+      </BSListGroup>
+      </div>
+      </BSCollapse> *@
+
+  </nav>
+</div>
+
+@code {
+  //BSCollapse? projectCollapseArea;
+  string ADMINISTRATION_ROLE = "Administrators";
+
+  private bool collapseNavMenu = true;
+  private bool collapseProjectMenu = true;
+  private string NavMenuCssClass => collapseNavMenu ? "collapse" : "";
+  private string ProjectMenuCssClass => collapseProjectMenu ? "show" : "";
+
+  protected override void OnInitialized()
+  {
+    base.OnInitialized();
+  }
+
+  private void ToggleProjectMenu()
+  {
+    collapseProjectMenu = !collapseProjectMenu;
+
+  }
+  private void ToggleNavMenu()
+  {
+    collapseNavMenu = !collapseNavMenu;
+
+  }
+}

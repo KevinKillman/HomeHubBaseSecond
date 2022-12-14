@@ -1,0 +1,119 @@
+@using HomeHub.Pages
+@using DbContexts.Nfl_Db
+@using Microsoft.EntityFrameworkCore
+@using Newtonsoft.Json
+@using HomeHub.State
+@inject IJSRuntime JSInterop
+@inject IConfiguration config
+@inject IDbContextFactory<nfl_2018_dbContext> DbFactory
+@implements IDisposable
+@inject NflProjectPageState PageState
+
+<div class="container">
+  <div class="gmap-wrapper">
+    <div class="gmap-child"
+         id="nfl-google-map">
+    </div>
+    <div class="gmap-child">
+      <div class="map-options-container">
+        <DxButton onclick="@ShowStationButtonClick">@ShowHideVar Weather Stations</DxButton>
+        <DxButton Click="@ResetButtonClick">Reset</DxButton>
+      </div>
+    </div>
+  </div>
+</div>
+
+@code {
+    string ShowHideVar { get => stationMarkersShowing ? "Hide" : "Show"; }
+    string? GApiKey;
+    bool stationMarkersShowing { get; set; }
+    List<MarkerModel>? MapMarkers;
+    INFLContext? _context;
+    List<MarkerModel> OriginalFootballMarkers = new List<MarkerModel>();
+    List<MarkerModel> OriginalStationMarkers = new List<MarkerModel>();
+    string serializedJson = "";
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        _context = await DbFactory.CreateDbContextAsync();
+        MapMarkers = await _context.GetStadiumLocationMarkersAsync<MarkerModel>();
+        OriginalStationMarkers = await _context.GetStationMarkersAsync<MarkerModel>();
+        OriginalFootballMarkers = new List<MarkerModel>(MapMarkers);
+        PageState.MarkersUpdated += MapMarkersChanged;
+        PageState.ResetMarkers += ResetToOriginalMarkers;
+        PageState.StationMarkersHid += HideStations;
+        GApiKey = config["ApiKeys:GoogleMaps"];
+
+        await base.OnInitializedAsync();
+    }
+    public async void Dispose()
+    {
+        _context?.Dispose();
+        PageState.MarkersUpdated -= MapMarkersChanged;
+        //await JSInterop.InvokeVoidAsync("disposeSatMap");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await RenderGoogleMap();
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    async Task RenderGoogleMap() => await JSInterop.InvokeVoidAsync("renderGoogleMapComponent", "#nfl-google-map", GApiKey,
+    JsonConvert.SerializeObject(MapMarkers));
+
+
+    async void MapMarkersChanged(object? sender, EventArgs eventArgs)
+    {
+        if (sender == null) return;
+        var sent = (NflProjectPageState)sender;
+        MapMarkers = null;
+        MapMarkers = new List<MarkerModel>();
+        if (sent.markerData != null)
+        {
+            foreach (var marker in sent.markerData)
+            {
+                MapMarkers.Add((MarkerModel)marker);
+            }
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    async void ResetToOriginalMarkers(object? sender, EventArgs e)
+    {
+        MapMarkers = new List<MarkerModel>(OriginalFootballMarkers);
+    }
+
+    public void ResetButtonClick()
+    {
+        if ( stationMarkersShowing )
+        {
+            stationMarkersShowing = !stationMarkersShowing;
+        }
+        PageState.SetTeamId(0);
+        PageState.MarkersDidReset();
+    }
+
+    public async Task ShowStationButtonClick()
+    {
+        if (!stationMarkersShowing)
+        {
+            MapMarkers?.AddRange(OriginalStationMarkers);
+        }
+        else
+        {
+            MapMarkers = MapMarkers?.Where(x => !OriginalStationMarkers.Contains(x)).ToList();
+        }
+        stationMarkersShowing = !stationMarkersShowing;
+        await InvokeAsync(StateHasChanged);
+    }
+    public void HideStations(object? sender, EventArgs eventArgs){
+        if(stationMarkersShowing){
+            stationMarkersShowing = !stationMarkersShowing;
+        }
+  }
+
+
+}

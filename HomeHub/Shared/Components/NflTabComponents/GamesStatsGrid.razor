@@ -1,0 +1,104 @@
+@using DbContexts.Nfl_Db
+@using HomeHub.Components
+@using HomeHub.Pages
+@using Microsoft.EntityFrameworkCore
+@using System.Reflection
+@using Newtonsoft.Json
+@inject IJSRuntime JSInterop
+@inject NflProjectPageState PageState
+
+<div class="@loadingClass">
+  <div class="spinner-grow @spinnerHide"
+       style="color:green;"
+       role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
+<DxGrid Data="@PageDataGamesStatsModel"
+        @ref="MaxGrid"
+        RowClick="@OnRowClick"
+        CustomizeElement="OnCustomizeElement">
+  <Columns>
+    @if (props is not null)
+    {
+      foreach (var prop in props)
+      {
+        <DxGridDataColumn FieldName="@prop.Name"
+                      SortMode="GridColumnSortMode.Custom" />
+      }
+    }
+  </Columns>
+</DxGrid>
+
+
+@code {
+  [Parameter]
+  public IDbContextFactory<nfl_2018_dbContext> DbFactory { get; set; }
+  [Parameter]
+  public long selectedTeamId { get; set; }
+  INFLContext? _context;
+  IEnumerable<GamesStatsGridModel>? PageDataGamesStatsModel;
+  GamesStatsGridModel demoModel = new GamesStatsGridModel();
+  IList<PropertyInfo>? props;
+  DxGrid? MaxGrid;
+  string loadingClass { get => ContextLoading(); }
+  /// <summary>
+  ///Just an inverse of the loadingClass variable.
+  ///</summary>
+  string spinnerHide { get => ContextLoading() == "" ? "hide" : ""; }
+  protected override async Task OnInitializedAsync()
+  {
+    Type pageDataType = demoModel.GetType();
+    props = new List<PropertyInfo>(pageDataType.GetProperties());
+    _context = await DbFactory.CreateDbContextAsync();
+    PageState.TeamChanged += TeamsUpdated;
+    await base.OnInitializedAsync();
+  }
+  void OnCustomizeElement(GridCustomizeElementEventArgs e)
+  {
+    if (e.ElementType == GridElementType.DataRow)
+    {
+      e.CssClass = "highlighted-item";
+    }
+  }
+  public string ContextLoading()
+  {
+    if (PageState.GetContextLoading())
+    {
+      return "grid-load-overlay";
+    }
+    else
+    {
+      return "";
+    }
+  }
+  void OnRowClick(GridRowClickEventArgs e)
+  {
+    string? game_id = e.Grid.GetRowValue(e.VisibleIndex, "GameId")?.ToString();
+    string? stadium_name = e.Grid.GetRowValue(e.VisibleIndex, "StadiumName")?.ToString();
+    GetStationStadiumMarkers(game_id, stadium_name);
+  }
+
+  public async Task GetStationStadiumMarkers(string GameId, string StadiumName)
+  {
+    long newID = long.Parse(GameId);
+    List<MarkerModel> markers = new List<MarkerModel>();
+    markers.Add(await _context.GetStadiumMarkerAsync<MarkerModel>(StadiumName));
+    markers.Add(await _context.GetStationMarkerByGame<MarkerModel>(newID));
+    PageState.UpdateMultipleMarkers(markers);
+
+  }
+
+  public void TeamsUpdated(object? sender, EventArgs eventArgs)
+  {
+    PageDataGamesStatsModel = _context?.GetGamesByTeamAsync<GamesStatsGridModel>(PageState.GetTeamId());
+    StateHasChanged();
+  }
+
+  public void Dispose()
+  {
+    PageState.TeamChanged -= TeamsUpdated;
+    _context?.Dispose();
+  }
+
+}

@@ -1,0 +1,52 @@
+@using HomeHub.Pages
+@using Microsoft.EntityFrameworkCore
+@using DbContexts.Nfl_Db
+@implements IDisposable
+@inject IDbContextFactory<nfl_2018_dbContext> DbFactory
+@inject NflProjectPageState PageState
+<div class="container"
+     style="border:solid red; ">
+  <BSRow style="border: solid purple;">
+    <BSCol Column="12">
+      <GoogleMap />
+    </BSCol>
+  </BSRow>
+  <BSRow style="border:solid blue;">
+    <div class="data-grid-container container">
+      <div class="data-grid-wrapper season-grid ">
+        <NflSeasonStatsGrid DbFactory=@DbFactory
+                            selectedTeamId=@TeamId />
+      </div>
+      <div class="data-grid-wrapper games-grid @TeamCssClass"
+           style="opacity: @OpacVal;">
+        <GamesStatsGrid DbFactory=@DbFactory
+                        selectedTeamId=@TeamId />
+      </div>
+    </div>
+  </BSRow>
+</div>
+
+@code {
+  public long TeamId { get => PageState.GetTeamId(); }
+  public string OpacVal { get => TeamCssClass == "hide" ? "0" : "1"; }
+  public string TeamCssClass { get => PageState.GetTeamId() == 0 ? "hide" : "show"; }
+  protected override async Task OnInitializedAsync()
+  {
+    PageState.TeamChanged += TeamChanged;
+    await base.OnInitializedAsync();
+  }
+  public void Dispose()
+  {
+    PageState.TeamChanged -= TeamChanged;
+  }
+
+  public void TeamChanged(object? sender, EventArgs e)
+  {
+    NflProjectPageState state = (NflProjectPageState)sender;
+    Console.WriteLine(state.GetTeamId());
+    Console.WriteLine(state.GetYear());
+
+    StateHasChanged();
+  }
+
+}

@@ -1,0 +1,40 @@
+.gmap-wrapper {
+  display: flex;
+  flex-direction: column;
+  /* grid-template-columns: 9fr 1fr; */
+  border: solid yellow;
+  gap: 2rem;
+  padding: .5%;
+}
+
+.gmap-wrapper>* {
+  border: solid black;
+
+}
+
+#nfl-google-map {
+  padding: .5%;
+}
+
+.data-grid-wrapper {
+  display: flex;
+  flex-direction: column;
+  /* grid-template-columns: 9fr 1fr; */
+  border: solid yellow;
+  gap: 2rem;
+  padding: .5%;
+}
+
+.map-options-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+@media (min-width:1000px) {
+  .gmap-wrapper {
+    flex-direction: row;
+  }
+
+
+}

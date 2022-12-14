@@ -1,0 +1,10 @@
+.component-body {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr .25fr;
+    gap: 1rem;
+}
+
+#editor-container {
+    /* width: 100%; */
+}

@@ -1,0 +1,86 @@
+@page "/StocksPage"
+@using EOD
+@using Microsoft.AspNetCore.Identity;
+@inject UserManager<IdentityUser> _UserManager
+@inject RoleManager<IdentityRole> _RoleManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IConfiguration config
+@inject StocksPageState PageState
+
+<AuthorizeView>
+  <Authorized>
+    <div class="top-row">
+      <span>
+        Financial Project @context.User?.Identity?.Name
+      </span>
+    </div>
+  </Authorized>
+  <NotAuthorized>
+    <div class="top-row">
+      <span>
+        Financial Project
+      </span>
+    </div>
+  </NotAuthorized>
+</AuthorizeView>
+
+<hr />
+<br>
+<div class="card-container container">
+  <div class="chart-box @GridColSpanCss">
+    <div class="chart-container">
+      <StockChart @ref="StockChart"
+                  config=config
+                  StockName=@StockName
+                  _eodAPI=_eodAPI />
+
+    </div>
+    <span class="oi @_optionIcon"
+          @onclick="@ToggleChartOptions"></span>
+  </div>
+  <div class="option-container">
+
+    <div class="container option-container @_optionBox">
+      <DxButton @onclick="@ToggleChartSMA">@SMAButtonText</DxButton>
+      <DxButton @onclick="@ToggleChartVolume">@VolumeText</DxButton>
+    </div>
+  </div>
+</div>
+
+
+
+@code {
+  public StockChart? StockChart;
+  private API _eodAPI { get => new API("demo"); }
+  private string _optionIcon { get => _optionMenuShowing ? "oi-chevron-right" : "oi-chevron-left"; }
+  private string _optionBox { get => _optionMenuShowing ? "" : "hide"; }
+  private bool _optionMenuShowing = false;
+  public string StockName { get => PageState.GetStockTickerQueryString(); }
+  public string SMAButtonText { get => StockChart.GetSMAToggle() ? "Hide SMA" : "Show SMA"; }
+  public string VolumeText { get => StockChart.GetVolumeToggle() ? "Hide Volume" : "Show Volume"; }
+  public string GridColSpanCss { get => _optionMenuShowing ? "grid-col-span-3" : "grid-col-span-4"; }
+  protected override async Task OnInitializedAsync()
+  {
+
+  }
+
+  async Task ToggleChartOptions()
+  {
+    _optionMenuShowing = !_optionMenuShowing;
+
+  }
+  protected override async Task OnAfterRenderAsync(bool firstRender)
+  {
+    await StockChart.SizeChanged();
+
+  }
+
+  void ToggleChartSMA()
+  {
+    StockChart?.ToggleSMA();
+  }
+  void ToggleChartVolume()
+  {
+    StockChart?.ToggleVolume();
+  }
+}

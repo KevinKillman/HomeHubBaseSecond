@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32901.82
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeHub", "HomeHub\HomeHub.csproj", "{38935DC1-335A-424F-8E08-4018B93D9EA1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbContexts", "DbContexts\DbContexts.csproj", "{37CC52D6-DA72-4F67-86BF-E575DC64EB33}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnippetDb", "SnippetDb\SnippetDb.csproj", "{8BB111AE-357B-450A-A56C-145279933AD1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{38935DC1-335A-424F-8E08-4018B93D9EA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38935DC1-335A-424F-8E08-4018B93D9EA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38935DC1-335A-424F-8E08-4018B93D9EA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38935DC1-335A-424F-8E08-4018B93D9EA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37CC52D6-DA72-4F67-86BF-E575DC64EB33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37CC52D6-DA72-4F67-86BF-E575DC64EB33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37CC52D6-DA72-4F67-86BF-E575DC64EB33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37CC52D6-DA72-4F67-86BF-E575DC64EB33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BB111AE-357B-450A-A56C-145279933AD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BB111AE-357B-450A-A56C-145279933AD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BB111AE-357B-450A-A56C-145279933AD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BB111AE-357B-450A-A56C-145279933AD1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {41BBC4C1-EECB-4AD2-BF64-10E47EE2CD49}
+	EndGlobalSection
+EndGlobal

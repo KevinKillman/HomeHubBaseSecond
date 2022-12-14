@@ -1,0 +1,38 @@
+@page "/NflProject"
+@using Microsoft.EntityFrameworkCore
+@using DbContexts.Nfl_Db
+@using HomeHub.Components
+@inject NflProjectPageState PageState
+@inject IDbContextFactory<nfl_2018_dbContext> DbFactory
+@implements IDisposable
+<div class="top-row">
+  <div>
+    <h1>Projects Page</h1>
+    <hr />
+  </div>
+</div>
+<div class="container ">
+  <DxTabs>
+    <DxTabPage Text="NFL Stadium Map"
+               TabIconCssClass="menu-icon oi oi-map">
+      <NflStadiumMap />
+    </DxTabPage>
+    <DxTabPage Text="Other Project"
+               TabIconCssClass="menu-icon oi oi-credit-card"></DxTabPage>
+  </DxTabs>
+</div>
+
+@code {
+  INFLContext? _context;
+
+  protected override async Task OnInitializedAsync()
+  {
+    _context = await DbFactory.CreateDbContextAsync();
+    await base.OnInitializedAsync();
+  }
+
+  public void Dispose()
+  {
+    _context?.Dispose();
+  }
+}

@@ -1,0 +1,34 @@
+﻿.spin {
+  display: block;
+}
+
+
+
+.dont-spin {
+  display: none;
+}
+
+.grid-wrapper-projects {
+  position: relative;
+  width: 100%;
+  justify-content: center;
+}
+
+.grid-load-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(128, 128, 128, 0.75);
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner-grow {}
+
+.hide {
+  display: none;
+}

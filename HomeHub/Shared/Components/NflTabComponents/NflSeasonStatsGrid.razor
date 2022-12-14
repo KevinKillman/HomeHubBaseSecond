@@ -1,0 +1,123 @@
+@using DbContexts.Nfl_Db
+@using HomeHub.Components
+@using HomeHub.Pages
+@using Microsoft.EntityFrameworkCore
+@using System.Reflection
+@using Newtonsoft.Json
+@inject IJSRuntime JSInterop
+@inject NflProjectPageState PageState
+
+
+<div class="@loadingClass">
+  <div class="spinner-grow @spinnerHide"
+       style="color:green;"
+       role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
+<DxGrid Data="@PageDataSeasonTeamStatModel"
+        @ref="@MaxGrid"
+        CustomizeElement="@OnCustomizeElement"
+        RowClick="@OnRowClick">
+  <Columns>
+    @if (props is not null)
+    {
+      foreach (var prop in props)
+      {
+        <DxGridDataColumn FieldName="@prop.Name"
+                      SortMode="GridColumnSortMode.Custom" />
+      }
+    }
+  </Columns>
+</DxGrid>
+
+
+@* some of the styling does not properly pull from the separate css file. Put styling that needs it here. *@
+<style>
+  .highlighted-item:hover {
+    background-color: rgb(0, 0, 0, .25);
+  }
+</style>
+
+@code {
+  [Parameter]
+  public IDbContextFactory<nfl_2018_dbContext> DbFactory { get; set; }
+  [Parameter]
+  public long selectedTeamId { get; set; }
+  INFLContext? _context;
+  IEnumerable<NflSeasonStatsGridDataModel>? PageDataSeasonTeamStatModel;
+  NflSeasonStatsGridDataModel demoModel = new NflSeasonStatsGridDataModel();
+  IList<PropertyInfo>? props;
+  DxGrid? MaxGrid;
+  string loadingClass { get => ContextLoading(); }
+  /// <summary>
+  ///Just an inverse of the loadingClass variable.
+  ///</summary>
+  string spinnerHide { get => ContextLoading() == "" ? "hide" : ""; }
+
+
+
+  protected override async Task OnInitializedAsync()
+  {
+    selectedTeamId = (long)0;
+    Type pageDataType = demoModel.GetType();
+    props = new List<PropertyInfo>(pageDataType.GetProperties());
+
+    _context = await DbFactory.CreateDbContextAsync();
+    if (_context is not null && _context.SeasonsTeamStats is not null)
+    {
+      PageState.SetContextLoading(true);
+      await Task.Run(() =>
+      {
+        PageDataSeasonTeamStatModel = _context.GetSeasonStatsGridDataModel<NflSeasonStatsGridDataModel>();
+        PageState.SetContextLoading(false);
+      });
+    }
+    await base.OnInitializedAsync();
+
+  }
+  async Task OnRowClick(GridRowClickEventArgs e)
+  {
+    string? stadium_name = e.Grid.GetRowValue(e.VisibleIndex, "Stadium")?.ToString();
+    MarkerModel? dbData;
+    if (stadium_name is not null && _context is not null && stadium_name != "")
+    {
+      await Task.Run(async () =>
+      {
+        dbData = await _context.GetStadiumMarkerAsync<MarkerModel>(stadium_name);
+        if (dbData != null)
+        {
+          PageState.UpdateMarker(dbData);
+        }
+      });
+      long TeamId = Convert.ToInt64(e.Grid.GetRowValue(e.VisibleIndex, "TeamId").ToString());
+      PageState.SetTeamId(TeamId);
+    }
+
+  }
+  void OnCustomizeElement(GridCustomizeElementEventArgs e)
+  {
+    if (e.ElementType == GridElementType.DataRow)
+    {
+      e.CssClass = "highlighted-item";
+    }
+  }
+
+  public string ContextLoading()
+  {
+    if (PageState.GetContextLoading())
+    {
+      return "grid-load-overlay";
+    }
+    else
+    {
+      return "";
+    }
+  }
+
+
+  public void Dispose()
+  {
+    _context?.Dispose();
+  }
+}

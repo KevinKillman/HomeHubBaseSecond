@@ -1,0 +1,38 @@
+.data-grid-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.data-grid-container>* {
+  flex: 1;
+}
+
+.data-grid-wrapper {
+  /* transition: 1s ease-in; */
+  opacity: 0;
+  border: solid brown;
+}
+
+.data-grid-wrapper.show {
+  display: block;
+  color: red;
+  opacity: 1;
+}
+
+.season-grid {
+  opacity: 1;
+}
+
+.games-grid {}
+
+.games-grid.show {
+  display: block;
+}
+
+@media (min-width:1600px) {
+  .data-grid-container {
+    flex-direction: row;
+    border-color: orangered;
+  }
+}

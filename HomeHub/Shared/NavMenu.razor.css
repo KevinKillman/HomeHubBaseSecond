@@ -1,0 +1,119 @@
+.navbar-toggler {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.top-row {
+  height: 3.5rem;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.navbar-brand {
+  font-size: 1.1rem;
+}
+
+
+
+.oi {
+  width: 2rem;
+  font-size: 1.1rem;
+  top: -2px;
+  width: fit-content;
+  height: fit-content;
+}
+
+.bi {
+  width: fit-content;
+  height: fit-content;
+  color: white;
+}
+
+.nav-child {
+  color: white;
+  text-decoration: none;
+}
+
+.nav-child :hover {
+  color: blue;
+}
+
+.project-collapse-area {
+  /*background: rgba(0,0,0);*/
+}
+
+#collapseAreaID {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.menu-toggle-icon {
+  background: none;
+  color: white;
+  border: none;
+  padding: .25rem;
+}
+
+a:hover {
+  background: var(--hover-background-color);
+}
+
+.menu-toggle-icon :hover {
+  border: solid thin;
+  border-color: white;
+  color: blue;
+  background: var(--hover-background-color);
+}
+
+.inline-div {
+  padding-left: 8%;
+  /* position: relative;
+  justify-content: center; */
+}
+
+.inline-div,
+button {}
+
+.nav-item {
+  font-size: 0.9rem;
+  padding-bottom: 0.5rem;
+}
+
+.nav-item:first-of-type {
+  padding-top: 1rem;
+}
+
+.nav-item:last-of-type {
+  padding-bottom: 1rem;
+}
+
+.nav-item ::deep a {
+  color: #d7d7d7;
+  border-radius: 4px;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  /* line-height: 3rem; */
+}
+
+.nav-item ::deep a.active {
+  background-color: rgba(255, 255, 255, 0.25);
+  color: white;
+}
+
+.nav-item ::deep a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.nav-link {
+  justify-content: center;
+}
+
+
+
+
+@media (min-width: 641px) {
+  .navbar-toggler {
+    display: none;
+  }
+
+
+}

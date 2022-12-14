@@ -1,0 +1,83 @@
+@using Microsoft.AspNetCore.Components.Web
+@namespace HomeHub.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0" />
+  <base href="~/" />
+  <!-- Quill stylesheet -->
+  <link href="//cdn.quilljs.com/1.3.6/quill.snow.css"
+        rel="stylesheet">
+  <link href="//cdn.quilljs.com/1.3.6/quill.bubble.css"
+        rel="stylesheet">
+        @*Smart stylesheet*@
+    <link href="_content/Smart.Blazor/css/smart.default.css" rel="stylesheet" />
+  <link rel="stylesheet"
+        href="css/bootstrap/bootstrap.min.css" />
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+  <link href="css/site.css"
+        rel="stylesheet" />
+  <link href="HomeHub.styles.css"
+        rel="stylesheet" />
+  <link rel="stylesheet"
+        href="_content/DevExpress.Blazor.Themes/bootstrap-external.bs5.min.css" />
+  <!-- ... -->
+  <script type="text/javascript"
+          src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+  @* <script>window.jQuery || document.write(decodeURIComponent('%3Cscript
+    src="js/jquery.min.js"%3E%3C/script%3E'))</script> *@
+  <!-- DevExtreme themes -->
+  <link rel="stylesheet"
+        href="https://cdn3.devexpress.com/jslib/22.1.5/css/dx.common.css">
+  <link rel="stylesheet"
+        href="https://cdn3.devexpress.com/jslib/22.1.5/css/dx.light.css">
+  <!-- DevExtreme Quill (required by the HtmlEditor UI component) -->
+  <script src="https://cdn3.devexpress.com/jslib/22.1.5/js/dx-quill.min.js"></script>
+  <!-- DevExtreme library -->
+  <script type="text/javascript"
+          src="https://cdn3.devexpress.com/jslib/22.1.5/js/dx.all.js"></script>
+  <!-- ... -->
+  <script type="text/javascript"
+          src="./js/functions/workaround.js"></script>
+
+  <component type="typeof(HeadOutlet)"
+             render-mode="ServerPrerendered" />
+</head>
+
+<body class="dx-viewport">
+
+  @RenderBody();
+
+  <div id="blazor-error-ui">
+    <environment include="Staging,Production">
+      An error has occurred. This application may no longer respond until reloaded.
+    </environment>
+    <environment include="Development">
+      An unhandled exception has occurred. See browser dev tools for details.
+    </environment>
+    <a href=""
+       class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+  </div>
+  <script src="_content/BlazorStrap/popper.min.js"></script>
+  <script src="_content/BlazorStrap/blazorstrap.js"></script>
+  <script src="_framework/blazor.server.js"></script>
+
+  <!-- Quill library -->
+  <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+  <script src="./js/BlazorQuill.js"></script>
+
+  <!-- Smart Library -->
+    <script src="_content/Smart.Blazor/js/smart.blazor.js"></script>
+    <script src="_content/Smart.Blazor/js/smart.elements.js"></script>
+
+</body>
+
+</html>

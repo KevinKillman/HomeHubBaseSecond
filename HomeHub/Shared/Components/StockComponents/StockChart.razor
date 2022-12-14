@@ -1,0 +1,136 @@
+@using EOD
+@using HomeHub.Components.StockComponents
+@* @inject IConfiguration config *@
+
+<DxChart @ref="@stockChart"
+         Data="@chartModel"
+         Width="100%"
+         Height="100%">
+  <DxChartValueAxis>
+    <DxChartAxisTitle Text="Dollars" />
+  </DxChartValueAxis>
+  <DxChartLegend Orientation="DevExpress.Blazor.Orientation.Vertical"
+                   HorizontalAlignment="DevExpress.Blazor.HorizontalAlignment.Center"
+                 HoverMode="ChartLegendHoverMode.None" />
+  <DxChartValueAxis Name="VolumeAxis"
+                    Position="HorizontalEdge.Right">
+    <DxChartAxisRange StartValue="@startAxisValue"
+                      EndValue="@endAxisValue" />
+  </DxChartValueAxis>
+  <DxChartBarSeries ArgumentField="(StockChartModel sp) => sp.Date"
+                    ValueField="(StockChartModel sp) => sp.AvgVolume"
+                    Name="Volume"
+                    Visible="@volumeToggle"
+                    Axis="VolumeAxis" />
+  <DxChartCandlestickSeries OpenField="(StockChartModel sp) => sp.Open"
+                            HighField="sp => sp.High"
+                            LowField="sp=>sp.Low"
+                            CloseField="sp=>sp.Close"
+                            ArgumentField="sp => sp.Date"
+                            Name="@StockName" />
+  <DxChartLineSeries ArgumentField="(StockChartModel sp) => sp.Date"
+                     ValueField="(StockChartModel sp) => sp.SMAData"
+                     Name="SMA"
+                     Visible="@SMAToggle" />
+
+  <DxChartTooltip @ref="@chartTip"
+                  Enabled="true">
+    <div style="margin: 0.75rem">
+      <div>@StockName</div>
+      <div>Open: @chartModel.Where(x=>x.Date==(DateTime)context.Point.Argument).Select(x=>x.Open).FirstOrDefault()
+      </div>
+      <div>Close:@chartModel.Where(x=>x.Date==(DateTime)context.Point.Argument).Select(x=>x.Close).FirstOrDefault()
+      </div>
+      <div>High: @chartModel.Where(x=>x.Date==(DateTime)context.Point.Argument).Select(x=>x.High).FirstOrDefault()
+      </div>
+      <div>Low: @chartModel.Where(x=>x.Date==(DateTime)context.Point.Argument).Select(x=>x.Low).FirstOrDefault()
+      </div>
+      @if (SMAToggle)
+            {
+              <div>SMA: @chartModel.Where(x=>x.Date==(DateTime)context.Point.Argument).Select(x=>x.SMAData).FirstOrDefault()
+              </div>
+            }
+            @if (volumeToggle)
+            {
+              <div>Volume:
+                @chartModel.Where(x=>x.Date==(DateTime)context.Point.Argument).Select(x=>x.AvgVolume).FirstOrDefault()</div>
+            }
+          </div>
+        </DxChartTooltip>
+      </DxChart>
+
+      @code {
+  [Parameter]
+  public IConfiguration config { get; set; }
+  [Parameter]
+  public string StockName { get; set; }
+  [Parameter]
+  public API _eodAPI { get; set; }
+  DxChart stockChart;
+  DxChartTooltip chartTip;
+  bool SMAToggle = true;
+  bool volumeToggle = true;
+  List<EOD.Model.HistoricalStockPrice>? response;
+  List<EOD.Model.TechnicalIndicators.SMA>? sMAs;
+  List<EOD.Model.TechnicalIndicators.AverageVolume>? averageVolumes;
+  private List<StockChartModel>? chartModel;
+  IEnumerable<StockChartModel> temp;
+  [Parameter]
+  public string Width { get; set; } = "100%";
+  public decimal? startAxisValue;
+  public decimal? endAxisValue;
+  protected override async Task OnInitializedAsync()
+  {
+    //Use when actually trying to access the API. Only have 20 requests per day
+    var _apiKey = config["ApiKeys:EOD"];
+    sMAs = await _eodAPI.GetSMAAsync(StockName, 50, DateTime.Today.AddYears(-1), DateTime.Today);
+    averageVolumes = await _eodAPI.GetAverageVolumeAsync(StockName, 50, DateTime.Today.AddYears(-1), DateTime.Today);
+    response = await _eodAPI.GetEndOfDayHistoricalStockPriceAsync(StockName, DateTime.Today.AddYears(-1), DateTime.Today,
+    API.HistoricalPeriod.Daily);
+    if (sMAs != null && response != null)
+    {
+      chartModel = response?.Select(x => new StockChartModel
+      {
+        Date = x.Date,
+        Open = x.Open,
+        High = x.High,
+        Low = x.Low,
+        Close = x.Close,
+        SMAData = sMAs.Where(y => DateTime.Parse(y.Date.ToString()).ToShortDateString() ==
+        DateTime.Parse(x.Date.ToString()).ToShortDateString()).Select(y => y.SMAData).FirstOrDefault(),
+        AvgVolume = averageVolumes.Where(y => DateTime.Parse(y.Date.ToString()).ToShortDateString() ==
+        DateTime.Parse(x.Date.ToString()).ToShortDateString()).Select(y => y.Avgvol).FirstOrDefault()
+      }).Where(x => x.SMAData != null).ToList();
+      startAxisValue = chartModel.Select(x => x.AvgVolume).Min();
+      endAxisValue = chartModel.Select(x => x.AvgVolume).Average() * 2;
+    }
+    await base.OnInitializedAsync();
+  }
+
+  public void ToggleSMA()
+  {
+    SMAToggle = !SMAToggle;
+  }
+  public bool GetSMAToggle()
+  {
+    return SMAToggle;
+  }
+  public void ToggleVolume()
+  {
+    volumeToggle = !volumeToggle;
+  }
+
+  public bool GetVolumeToggle()
+  {
+    return volumeToggle;
+  }
+
+  public async Task SizeChanged()
+  {
+    await stockChart.RedrawAsync();
+  }
+
+
+
+
+}
