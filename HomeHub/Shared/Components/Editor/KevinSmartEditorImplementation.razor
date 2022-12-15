@@ -1,0 +1,124 @@
+@using Microsoft.EntityFrameworkCore;
+@using SnippetDb;
+@using SnippetDb.Tables
+@implements IDisposable
+@inject IDbContextFactory<SnippetDbContext> DbFactory
+<div class="content">
+  <div class="container component-body">
+    <div class="card">
+      <div class="card-body"
+           id="editor-container">
+        <Editor @ref="_smartEdit"
+                ToolbarItems="@items"
+                ToolbarViewMode="ToolbarViewMode.MultiRow">@content</Editor>
+      </div>
+    </div>
+    <div class="card"
+         id="options-container">
+      <div class="card-body">
+        @content
+      </div>
+      <div class="card-body">
+        <AuthorizeView>
+          <Authorized>
+            <button class="btn btn-primary"
+                    @onclick="SaveHTML">Save as HTML</button>
+          </Authorized>
+          <NotAuthorized>
+            <span><a class="link-info"
+                 href="Identity/Account/Register">Create an account</a> or <a class="link-info"
+                 href="Identity/Account/Login">login</a> to save!</span>
+          </NotAuthorized>
+        </AuthorizeView>
+      </div>
+      <div class="card-footer">
+        @foreach (var item in FilterItems)
+        {
+          @item
+        }
+      </div>
+      @* <div class="card-footer">
+        @foreach (var item in FilterItems)
+        {
+        <BSButton @onclick="ButtonClick">@item</BSButton>
+        }
+        </div> *@
+    </div>
+  </div>
+  <div class="container options-container"
+       id="snippet-cards">
+    @foreach (var snip in snippets)
+    {
+      <div class="card">
+
+        <div class="card-body">
+          <div class="card-title">
+            @snip.Title
+          </div>
+          <div class="card-content">
+            @snip.Content
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+</div>
+@code {
+  Editor _smartEdit;
+  SnippetDbContext _context;
+  List<Snippet> snippets = new List<Snippet>();
+  MarkupString content = (MarkupString)"<p>Enter some text to get started!</p>";
+  ///<summary>
+  ///
+  ///</summary>
+  public List<MarkupString> FilterItems = new List<MarkupString>() { (MarkupString)"<p>text</p>" };
+  List<IEditorToolbarItem> items = new List<IEditorToolbarItem>()
+{
+new EditorToolbarItem() { Name = "Bold" },
+new EditorToolbarItem() { Name = "Italic" },
+new EditorToolbarItem() { Name = "Underline" },
+new EditorToolbarItem() { Name = "StrikeThrough" },
+new EditorToolbarItem() { Name = "FontName" },
+new EditorToolbarItem() { Name = "FontSize" },
+new EditorToolbarItem() { Name = "FontColor" },
+new EditorToolbarItem() { Name = "BackgroundColor" },
+new EditorToolbarItem() { Name = "LowerCase" },
+new EditorToolbarItem() { Name = "UpperCase" },
+new EditorToolbarItem() { Name = "Formats" },
+new EditorToolbarItem() { Name = "Alignment" },
+new EditorToolbarItem() { Name = "OrderedList" },
+new EditorToolbarItem() { Name = "UnorderedList" },
+new EditorToolbarItem() { Name = "Outdent" },
+new EditorToolbarItem() { Name = "Indent" },
+new EditorToolbarItem() { Name = "Hyperlink" },
+new EditorToolbarItem() { Name = "Table" },
+new EditorToolbarItem() { Name = "Image" },
+new EditorToolbarItem() { Name = "Undo" },
+new EditorToolbarItem() { Name = "Redo" },
+new EditorToolbarItem() { Name = "Print" },
+new EditorToolbarItem() { Name = "ClearFormat" }
+};
+
+  protected override async Task OnInitializedAsync()
+  {
+    _context = await DbFactory.CreateDbContextAsync();
+    snippets = await _context.GetSnips();
+    await base.OnInitializedAsync();
+  }
+  async Task SaveHTML()
+  {
+    var htmlContent = await _smartEdit.GetHTML();
+    await _context.SaveHtmlSnippetAsync(htmlContent);
+    snippets = await _context.GetSnips();
+  }
+  public void Dispose()
+  {
+    _context.Dispose();
+  }
+  void ButtonClick(EventArgs _)
+  {
+    content = (MarkupString)"<p>text</p>";
+    _smartEdit.StateHasChanged();
+  }
+}

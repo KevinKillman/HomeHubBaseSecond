@@ -10,7 +10,7 @@
     <DxChartAxisTitle Text="Dollars" />
   </DxChartValueAxis>
   <DxChartLegend Orientation="DevExpress.Blazor.Orientation.Vertical"
-                   HorizontalAlignment="DevExpress.Blazor.HorizontalAlignment.Center"
+                 HorizontalAlignment="DevExpress.Blazor.HorizontalAlignment.Center"
                  HoverMode="ChartLegendHoverMode.None" />
   <DxChartValueAxis Name="VolumeAxis"
                     Position="HorizontalEdge.Right">
@@ -66,8 +66,8 @@
   public string StockName { get; set; }
   [Parameter]
   public API _eodAPI { get; set; }
-  DxChart stockChart;
-  DxChartTooltip chartTip;
+  DxChart? stockChart;
+  DxChartTooltip? chartTip;
   bool SMAToggle = true;
   bool volumeToggle = true;
   List<EOD.Model.HistoricalStockPrice>? response;

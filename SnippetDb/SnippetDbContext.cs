@@ -34,5 +34,21 @@ namespace SnippetDb
         Name = "Test Tag",
       });
     }
+
+    public async Task SaveHtmlSnippetAsync(string htmlContent, List<Tag>? tags = null)
+    {
+      this.Add<Snippet>(new Snippet()
+      {
+        Content = htmlContent,
+        Title = "Test Entry",
+        Subject = "Test"
+      });
+      await this.SaveChangesAsync();
+    }
+
+    public async Task<List<Snippet>> GetSnips()
+    {
+      return await this.Snippets.ToListAsync();
+    }
   }
 }
