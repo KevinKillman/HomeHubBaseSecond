@@ -1,0 +1,45 @@
+@using Microsoft.EntityFrameworkCore;
+@using SnippetDb;
+@using SnippetDb.Tables
+@implements IDisposable
+@inject IDbContextFactory<SnippetDbContext> DbFactory
+
+<div class="card">
+  <div class="card-header snippet-card-head">
+    <span class="card-title card-text">Title: <input @bind="@_snip.Title" /></span> <span class="card-text">Subject:
+      <input @bind="@_snip.Subject" /></span>
+  </div>
+  <div class="card-body card-text">
+    <Editor ToolbarViewMode="ToolbarViewMode.MultiRow">@GetMarkupString(_snip.Content)</Editor>
+  </div>
+  <div class="card-footer"><span class="btn btn-dark"
+          @onclick="SaveSnippetContext">Save Context</span></div>
+</div>
+
+@code {
+  [Parameter]
+  public int SnippetId { get; set; }
+  SnippetContextManager _context;
+  string SearchText = "";
+  Snippet _snip => _context.GetSnip(SnippetId);
+  protected override async Task OnInitializedAsync()
+  {
+    _context = new SnippetContextManager(await DbFactory.CreateDbContextAsync());
+    await base.OnInitializedAsync();
+  }
+
+  public void Dispose()
+  {
+    _context.Dispose();
+  }
+
+  MarkupString GetMarkupString(string s)
+  {
+    return (MarkupString)s;
+  }
+
+  void SaveSnippetContext(EventArgs e)
+  {
+    _context.SaveSnips();
+  }
+}

@@ -107,7 +107,14 @@ button {}
   justify-content: center;
 }
 
+/* #collapse-submenu {
+  color: white;
+} */
 
+#snippet-button {
+  position: relative;
+  display: flex;
+}
 
 
 @media (min-width: 641px) {

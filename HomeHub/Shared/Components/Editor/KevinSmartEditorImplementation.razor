@@ -71,7 +71,7 @@
 @code {
   public string SearchText = "";
   Editor _smartEdit;
-  SnippetDbContext _context;
+  SnippetContextManager _context;
   List<Snippet> snippets = new List<Snippet>();
   List<Snippet> filteredSnips => snippets.Where(snip => snip.Content.ToLower().Contains(SearchText.ToLower())).ToList();
   MarkupString content = (MarkupString)"<p>Enter some text to get started!</p>";
@@ -108,7 +108,7 @@ new EditorToolbarItem() { Name = "ClearFormat" }
 
   protected override async Task OnInitializedAsync()
   {
-    _context = await DbFactory.CreateDbContextAsync();
+    _context = new SnippetContextManager(await DbFactory.CreateDbContextAsync());
     snippets = await _context.GetSnips();
     await base.OnInitializedAsync();
   }

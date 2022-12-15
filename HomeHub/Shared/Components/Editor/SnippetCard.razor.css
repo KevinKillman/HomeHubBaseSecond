@@ -1,0 +1,5 @@
+.snippet-card-head {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}

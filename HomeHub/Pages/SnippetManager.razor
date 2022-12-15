@@ -1,0 +1,38 @@
+@page "/SnippetManager"
+@using Microsoft.EntityFrameworkCore;
+@using SnippetDb;
+@using SnippetDb.Tables
+@implements IDisposable
+@inject IDbContextFactory<SnippetDbContext> DbFactory
+
+<div class="content">
+  <div class="container outer-snippet-body">
+    @foreach (var id in _snippets)
+    {
+      <SnippetCard SnippetId="@id"></SnippetCard>
+
+    }
+  </div>
+</div>
+
+@code {
+  SnippetDbContext _context;
+  string SearchText = "";
+  List<int> _snippets => _context.Snippets.Select(s => s.Id).ToList();
+
+  protected override async Task OnInitializedAsync()
+  {
+    _context = await DbFactory.CreateDbContextAsync();
+    await base.OnInitializedAsync();
+  }
+
+  public void Dispose()
+  {
+    _context.Dispose();
+  }
+
+  MarkupString GetMarkupString(string s)
+  {
+    return (MarkupString)s;
+  }
+}
