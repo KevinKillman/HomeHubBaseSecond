@@ -6,6 +6,9 @@
 <div class="content">
   <div class="container component-body">
     <div class="card">
+      <div class="card-header">
+
+      </div>
       <div class="card-body"
            id="editor-container">
         <Editor @ref="_smartEdit"
@@ -26,10 +29,18 @@
           </Authorized>
           <NotAuthorized>
             <span><a class="link-info"
-                 href="Identity/Account/Register">Create an account</a> or <a class="link-info"
+                 href="Identity/Account/Register">Create an account</a>
+              or
+              <a class="link-info"
                  href="Identity/Account/Login">login</a> to save!</span>
           </NotAuthorized>
         </AuthorizeView>
+      </div>
+      <div class="card-body">
+        @foreach (var item in filteredSnips)
+        {
+          <div class="card-text">@item.Title</div>
+        }
       </div>
       <div class="card-footer">
         @foreach (var item in FilterItems)
@@ -38,7 +49,7 @@
         }
       </div>
       @* <div class="card-footer">
-        @foreach (var item in FilterItems)
+        @foreach (var item in filteredSnips)
         {
         <BSButton @onclick="ButtonClick">@item</BSButton>
         }
@@ -47,27 +58,22 @@
   </div>
   <div class="container options-container"
        id="snippet-cards">
-    @foreach (var snip in snippets)
-    {
-      <div class="card">
-
-        <div class="card-body">
-          <div class="card-title">
-            @snip.Title
-          </div>
-          <div class="card-content">
-            @snip.Content
-          </div>
-        </div>
-      </div>
-    }
+    <div class="text-center bg-blue-100">
+      <input class="border-4 w-1/3 rounded m-6 p-6 h-8
+               border-blue-300"
+             @bind-value="SearchText"
+             @bind-value:event="oninput"
+             placeholder="Search by title" />
+    </div>
   </div>
 
 </div>
 @code {
+  public string SearchText = "";
   Editor _smartEdit;
   SnippetDbContext _context;
   List<Snippet> snippets = new List<Snippet>();
+  List<Snippet> filteredSnips => snippets.Where(snip => snip.Content.ToLower().Contains(SearchText.ToLower())).ToList();
   MarkupString content = (MarkupString)"<p>Enter some text to get started!</p>";
   ///<summary>
   ///

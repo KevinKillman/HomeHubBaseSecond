@@ -1,0 +1,5 @@
+.outer-snippet-body {
+  position: relative;
+  display: flex;
+  gap: 1rem;
+}
