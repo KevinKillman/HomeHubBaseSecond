@@ -1,0 +1,16 @@
+@page "/TagManager"
+@using Microsoft.EntityFrameworkCore;
+@using SnippetDb;
+@using SnippetDb.Tables
+@implements IDisposable
+@inject IDbContextFactory<SnippetDbContext> DbFactory
+
+@code {
+  SnippetDbContext _context;
+  List<Tag> _tags => _context.Tags.ToList();
+  protected override async Task OnInitializedAsync()
+  {
+    _context = await DbFactory.CreateDbContextAsync();
+    await base.OnInitializedAsync();
+  }
+}
