@@ -8,6 +8,7 @@ namespace SnippetDb
   {
     public DbSet<Snippet> Snippets { get; set; }
     public DbSet<Tag> Tags { get; set; }
+    public DbSet<RelatedTags> RelatedTags { get; set; }
     public SnippetDbContext(DbContextOptions<SnippetDbContext> options)
         : base(options)
     {
@@ -21,6 +22,9 @@ namespace SnippetDb
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
       base.OnModelCreating(modelBuilder);
+      modelBuilder.Entity<RelatedTags>().HasKey(x => x.RelatedTagsId);
+      modelBuilder.Entity<RelatedTags>().HasOne<Tag>(x => x.PrimaryTag);
+      modelBuilder.Entity<RelatedTags>().HasOne<Tag>(x => x.SecondaryTag);
       modelBuilder.Entity<Snippet>().HasData(new Snippet()
       {
         Id = 1,
@@ -31,7 +35,14 @@ namespace SnippetDb
       modelBuilder.Entity<Tag>().HasData(new Tag()
       {
         Id = 1,
+        Name = "Testing",
+        Description = "Description",
+      });
+      modelBuilder.Entity<Tag>().HasData(new Tag()
+      {
+        Id = -1,
         Name = "Test Tag",
+        Description = "Description",
       });
     }
   }

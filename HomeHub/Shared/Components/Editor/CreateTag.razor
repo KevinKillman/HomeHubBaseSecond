@@ -1,0 +1,20 @@
+@using Microsoft.EntityFrameworkCore;
+@using SnippetDb;
+@using SnippetDb.Tables
+@implements IDisposable
+@inject IDbContextFactory<SnippetDbContext> DbFactory
+
+
+
+@code {
+  SnippetContextManager _contextManager;
+
+  protected override async Task OnInitializedAsync()
+  {
+    //_contextManager = new SnippetContextManager(await DbFactory.CreateDbContextAsync());
+  }
+  public void Dispose()
+  {
+    //_contextManager.Dispose();
+  }
+}

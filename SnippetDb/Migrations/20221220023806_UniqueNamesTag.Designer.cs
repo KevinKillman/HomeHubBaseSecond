@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SnippetDb;
 
@@ -11,9 +12,10 @@ using SnippetDb;
 namespace SnippetDb.Migrations
 {
     [DbContext(typeof(SnippetDbContext))]
-    partial class SnippetDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221220023806_UniqueNamesTag")]
+    partial class UniqueNamesTag
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -226,21 +228,16 @@ namespace SnippetDb.Migrations
 
             modelBuilder.Entity("SnippetDb.Tables.RelatedTags", b =>
                 {
-                    b.Property<int>("RelatedTagsId")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("TagId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RelatedTagsId"), 1L, 1);
-
-                    b.Property<int>("PrimaryTagId")
+                    b.Property<int>("SecondTagId")
                         .HasColumnType("int");
 
                     b.Property<int>("SecondaryTagId")
                         .HasColumnType("int");
 
-                    b.HasKey("RelatedTagsId");
-
-                    b.HasIndex("PrimaryTagId");
+                    b.HasKey("TagId", "SecondTagId");
 
                     b.HasIndex("SecondaryTagId");
 
@@ -296,15 +293,10 @@ namespace SnippetDb.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("TagId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
                         .IsUnique();
-
-                    b.HasIndex("TagId");
 
                     b.ToTable("Tags");
 
@@ -312,12 +304,6 @@ namespace SnippetDb.Migrations
                         new
                         {
                             Id = 1,
-                            Description = "Description",
-                            Name = "Testing"
-                        },
-                        new
-                        {
-                            Id = -1,
                             Description = "Description",
                             Name = "Test Tag"
                         });
@@ -391,28 +377,21 @@ namespace SnippetDb.Migrations
 
             modelBuilder.Entity("SnippetDb.Tables.RelatedTags", b =>
                 {
-                    b.HasOne("SnippetDb.Tables.Tag", "PrimaryTag")
-                        .WithMany()
-                        .HasForeignKey("PrimaryTagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("SnippetDb.Tables.Tag", "SecondaryTag")
                         .WithMany()
                         .HasForeignKey("SecondaryTagId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("SnippetDb.Tables.Tag", "PrimaryTag")
+                        .WithMany("Tags")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("PrimaryTag");
 
                     b.Navigation("SecondaryTag");
-                });
-
-            modelBuilder.Entity("SnippetDb.Tables.Tag", b =>
-                {
-                    b.HasOne("SnippetDb.Tables.Tag", null)
-                        .WithMany("SecondaryTags")
-                        .HasForeignKey("TagId");
                 });
 
             modelBuilder.Entity("SnippetTag", b =>
@@ -432,7 +411,7 @@ namespace SnippetDb.Migrations
 
             modelBuilder.Entity("SnippetDb.Tables.Tag", b =>
                 {
-                    b.Navigation("SecondaryTags");
+                    b.Navigation("Tags");
                 });
 #pragma warning restore 612, 618
         }

@@ -8,6 +8,7 @@ namespace SnippetDb.Tables
     public int Id { get; set; }
     public string Content { get; set; }
     public string Title { get; set; }
+    public string NormalizedTitle { get => Title.ToUpper(); }
     public string Subject { get; set; }
     public IList<Tag> Tags { get; set; }
   }

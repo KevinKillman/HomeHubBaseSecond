@@ -1,0 +1,11 @@
+.tag-card-head {
+  position: relative;
+  display: flex;
+  gap: 2rem;
+}
+
+.other-tag-wrapper {
+  position: relative;
+  display: flex;
+  gap: 1rem;
+}

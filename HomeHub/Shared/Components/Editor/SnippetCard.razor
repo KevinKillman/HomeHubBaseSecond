@@ -19,18 +19,18 @@
 @code {
   [Parameter]
   public int SnippetId { get; set; }
-  SnippetContextManager _context;
+  SnippetContextManager _contextManager;
   string SearchText = "";
-  Snippet _snip => _context.GetSnip(SnippetId);
+  Snippet _snip => _contextManager.GetSnip(SnippetId);
   protected override async Task OnInitializedAsync()
   {
-    _context = new SnippetContextManager(await DbFactory.CreateDbContextAsync());
+    _contextManager = new SnippetContextManager(await DbFactory.CreateDbContextAsync());
     await base.OnInitializedAsync();
   }
 
   public void Dispose()
   {
-    _context.Dispose();
+    _contextManager.Dispose();
   }
 
   MarkupString GetMarkupString(string s)
@@ -40,6 +40,6 @@
 
   void SaveSnippetContext(EventArgs e)
   {
-    _context.SaveSnips();
+    _contextManager.SaveChanges();
   }
 }

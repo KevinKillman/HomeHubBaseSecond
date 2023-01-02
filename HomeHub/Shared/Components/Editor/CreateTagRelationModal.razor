@@ -1,0 +1,24 @@
+@using Microsoft.EntityFrameworkCore;
+@using SnippetDb;
+@using SnippetDb.Tables
+@implements IDisposable
+@inject IJSRuntime JsInterop
+@inject IDbContextFactory<SnippetDbContext> DbFactory
+<div class="container accordion-body">
+
+</div>
+
+@code {
+  SnippetContextManager _contextManager;
+  //Task<List<Tag>> _tags => _contextManager.GetTagsAsync();
+
+  protected override async Task OnInitializedAsync()
+  {
+    //_contextManager = new SnippetContextManager(await DbFactory.CreateDbContextAsync());
+  }
+
+  public void Dispose()
+  {
+
+  }
+}

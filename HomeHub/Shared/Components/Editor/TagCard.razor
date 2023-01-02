@@ -1,0 +1,115 @@
+@using Microsoft.EntityFrameworkCore;
+@using SnippetDb;
+@using SnippetDb.Tables
+@implements IDisposable
+@inject IJSRuntime JsInterop
+@inject SnippetDbContext _context
+
+<div class="card">
+  <EditForm Model="@_tag"
+            OnValidSubmit="@SaveTagContext">
+    <div class="card-header tag-card-head">
+      <span>Title:
+        <InputText id="name"
+                   @bind-Value="@_tag.Name" />
+      </span>
+      <span>Description:
+        <InputText id="description"
+                   @bind-Value="@_tag.Description" />
+        <DataAnnotationsValidator />
+        <ValidationSummary @ref="Vali" />
+      </span>
+
+    </div>
+    <div class="container card-body">
+      <div class="related-tag-wrapper card-container">
+        @* @foreach (var relatedTag in _relatedTags)
+          {
+          <div class="single-tag-reference card">
+          <div class="card-header">
+          Primary: @relatedTag.PrimaryTag.Name, Secondary: @relatedTag.SecondaryTag.Name <span
+          style="justify-self: right;"></span>
+          </div>
+          </div>
+          } *@
+      </div>
+      <div class="other-tag-wrapper card-container">
+        @foreach (var tag in _tags)
+        {
+          <div class="single-tag-reference card">
+            <div class="card-header">
+              @tag.Name
+            </div>
+            <div class="card-body"></div>
+            <div class="card-footer">
+@*              <a class="btn btn-light">
+                Create Relation
+              </a>*@
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+    <div class="card-footer">
+      <button type="submit"
+              class="btn btn-dark">
+        Submit
+      </button>
+    </div>
+  </EditForm>
+
+</div>
+@code {
+    [Parameter]
+    public List<Tag> Tags { get; set; }
+    [Parameter]
+    public Tag Tag { get; set; }
+    [Parameter]
+    public SnippetContextManager ContextManager { get; set; }
+    // [Parameter]
+    //public List<Tag> RelatedTags { get; set; }
+    List<Tag> _tags => Tags;
+    Tag _tag => Tag;
+    //List<Tag> _relatedTags => RelatedTags;
+
+    SnippetContextManager _contextManager => ContextManager;
+    ValidationSummary? Vali;
+    int buttonClickNum = 0;
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+    }
+  public void Dispose()
+  {
+    //_contextManager.Dispose();
+  }
+
+  async Task DeleteRelation(int relationId)
+  {
+    buttonClickNum++;
+    //await _contextManager.DeleteRelationAsync(relationId);
+  }
+
+  async Task CreateRelation(int primaryTagId, int secondaryTagId)
+  {
+  }
+
+  async Task SaveTagContext()
+  {
+    if (!(_tags.Select(x => x.Name).ToList().Contains(_tag.Name)))
+    {
+      try
+      {
+      }
+      catch (Exception ex)
+      {
+        await JsInterop.InvokeVoidAsync("Alert", ex.Message);
+      }
+    }
+    else
+    {
+      await JsInterop.InvokeVoidAsync("Alert", "Tags cannot share names.");
+    }
+  }
+}

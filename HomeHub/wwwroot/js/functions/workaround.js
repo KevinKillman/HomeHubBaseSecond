@@ -1,3 +1,6 @@
+window.Alert = function (message) {
+  alert(message);
+};
 var satMap = null;
 var markerData;
 const originalZoom = 14;

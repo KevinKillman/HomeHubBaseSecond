@@ -20,6 +20,13 @@ builder.Services.AddDbContextFactory<SnippetDbContext>(options =>
   options.UseSqlServer(snippetConnectionString, assembly =>
     assembly.MigrationsAssembly(typeof(SnippetDbContext).Assembly.FullName));
 });
+builder.Services.AddDbContext<SnippetDbContext>(
+  options =>
+  {
+    options.UseSqlServer(snippetConnectionString, assembly =>
+  assembly.MigrationsAssembly(typeof(SnippetDbContext).Assembly.FullName));
+  }
+);
 
 // Add services to the container.
 //builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
@@ -37,7 +44,8 @@ builder.Services.AddSmart();
 builder.Services.AddScoped<INFLContext, nfl_2018_dbContext>();
 builder.Services.AddDbContextFactory<nfl_2018_dbContext>(opt =>
 {
-  opt.UseNpgsql(nflDefaultConnectionString);
+  opt.UseNpgsql(nflDefaultConnectionString, assembly =>
+    assembly.MigrationsAssembly(typeof(nfl_2018_dbContext).Assembly.FullName));
 });
 
 builder.Services.AddScoped<NflProjectPageState, NflProjectPageState>();
@@ -49,7 +57,7 @@ builder.WebHost.UseStaticWebAssets();
 WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if ( !app.Environment.IsDevelopment() )
+if (!app.Environment.IsDevelopment())
 {
   app.UseExceptionHandler("/Error");
   // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.

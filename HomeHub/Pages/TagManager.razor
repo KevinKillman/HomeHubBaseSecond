@@ -3,14 +3,52 @@
 @using SnippetDb;
 @using SnippetDb.Tables
 @implements IDisposable
-@inject IDbContextFactory<SnippetDbContext> DbFactory
+@inject SnippetDbContext _context
+
+<div class="content">
+  <div class="container create-new-tag-container">
+    <input @bind="@_newTag" />
+    <div class="btn btn-outline-light"
+         style="color: black;"
+         onclick="@CreateTag">Create Tag</div>
+  </div>
+  <div class="container">
+    <div class="container outer-tag-body">
+      @foreach (var tag in _tags)
+      {
+        <TagCard Tag=tag
+               Tags=_tags />
+      }
+    </div>
+  </div>
+
+
+</div>
 
 @code {
-  SnippetDbContext _context;
-  List<Tag> _tags => _context.Tags.ToList();
+  SnippetContextManager _contextManager;
+  string? _newTag;
+  List<int> _tagIds = new List<int>();
+  List<Tag> _tags = new List<Tag>();
+  List<Tag> _relatedTags = new List<Tag>();
   protected override async Task OnInitializedAsync()
   {
-    _context = await DbFactory.CreateDbContextAsync();
+    _contextManager = new SnippetContextManager(_context);
+    _tags = await _contextManager.GetTagsAsync();
     await base.OnInitializedAsync();
+
   }
+  public void Dispose()
+  {
+    //_contextManager.Dispose();
+  }
+
+  async Task CreateTag(EventArgs e)
+  {
+    if (_newTag != null && _newTag != "")
+    {
+      await _contextManager.CreateNewTagAsync(_newTag);
+    }
+  }
+
 }

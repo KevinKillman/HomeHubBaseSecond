@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SnippetDb;
 
@@ -11,9 +12,10 @@ using SnippetDb;
 namespace SnippetDb.Migrations
 {
     [DbContext(typeof(SnippetDbContext))]
-    partial class SnippetDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221225224457_sd5")]
+    partial class sd5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -296,25 +298,14 @@ namespace SnippetDb.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("TagId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.HasIndex("TagId");
-
                     b.ToTable("Tags");
 
                     b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "Description",
-                            Name = "Testing"
-                        },
                         new
                         {
                             Id = -1,
@@ -408,13 +399,6 @@ namespace SnippetDb.Migrations
                     b.Navigation("SecondaryTag");
                 });
 
-            modelBuilder.Entity("SnippetDb.Tables.Tag", b =>
-                {
-                    b.HasOne("SnippetDb.Tables.Tag", null)
-                        .WithMany("SecondaryTags")
-                        .HasForeignKey("TagId");
-                });
-
             modelBuilder.Entity("SnippetTag", b =>
                 {
                     b.HasOne("SnippetDb.Tables.Snippet", null)
@@ -428,11 +412,6 @@ namespace SnippetDb.Migrations
                         .HasForeignKey("TagsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("SnippetDb.Tables.Tag", b =>
-                {
-                    b.Navigation("SecondaryTags");
                 });
 #pragma warning restore 612, 618
         }
